@@ -1,0 +1,63 @@
+---
+title: "imdb_data_analysis"
+output: html_document
+date: "2026-01-17"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r error=FALSE, warning=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(scales)
+```
+
+```{r error=FALSE, warning=FALSE}
+title_basics <- read_tsv(
+  "title.basics.tsv",
+  na = "\\N",
+  quote = ""
+)
+
+title_episode <- read_tsv(
+  "title.episode.tsv",
+  na = "\\N",
+  quote = ""
+)
+
+title_ratings <- read_tsv(
+  "title.ratings.tsv",
+  na = "\\N",
+  quote = ""
+)
+```
+
+```{r error=FALSE, warning=FALSE}
+tv_series <- title_basics %>%
+  filter(!is.na(endYear))
+
+tv_series_ids <- tv_series$tconst
+```
+
+```{r error=FALSE, warning=FALSE}
+tv_series_ratings <- title_ratings %>%
+  filter(tconst %in% tv_series_ids)
+
+tv_series_episodes <- title_episode %>%
+  filter(parentTconst %in% tv_series_ids)
+```
+
+
+
+
+
+
+
+
+
+
