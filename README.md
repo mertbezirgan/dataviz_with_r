@@ -1,5 +1,10 @@
 # IMDB Data Analysis
 
+## Group Members
+Begüm Tüzüner
+Mehmet Mert Bezirgan
+Özlem Şenel
+
 ## Data Files
 
 Download the compressed data files from [Google Drive](https://drive.google.com/drive/folders/1UsDSLr6DWbePGT_k-JaxQyImaqMpjn3y?usp=sharing):
