@@ -1,5 +1,15 @@
 # IMDB Data Analysis
 
+## Data Files
+
+Download the compressed data files from [Google Drive](https://drive.google.com/drive/folders/1UsDSLr6DWbePGT_k-JaxQyImaqMpjn3y?usp=sharing):
+
+- title.basics.tsv.gz
+- title.episode.tsv.gz
+- title.ratings.tsv.gz
+
+Extract the `.tsv` files and place them in the root directory for the R code to work.
+
 ## Execution Order
 
 1. **imdb_data_analysis_1.Rmd** - Processes the raw IMDB dataset, generates the first visualization, and outputs `imdb_ids.csv`

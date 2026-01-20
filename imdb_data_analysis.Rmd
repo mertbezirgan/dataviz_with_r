@@ -11,53 +11,92 @@ knitr::opts_chunk$set(echo = TRUE)
 ## R Markdown
 
 ```{r error=FALSE, warning=FALSE}
+install.packages("tidyverse")
+install.packages("ggplot2")
+install.packages("dplyr")
+install.packages("scales")
+install.packages("viridis")
 library(tidyverse)
 library(ggplot2)
 library(dplyr)
 library(scales)
+library(viridis)
 ```
 
 ```{r error=FALSE, warning=FALSE}
-title_basics <- read_tsv(
-  "title.basics.tsv",
-  na = "\\N",
-  quote = ""
-)
-
-title_episode <- read_tsv(
-  "title.episode.tsv",
-  na = "\\N",
-  quote = ""
-)
-
-title_ratings <- read_tsv(
-  "title.ratings.tsv",
-  na = "\\N",
-  quote = ""
-)
+basics <- read_tsv("title.basics.tsv", na = "\\N", quote = "")
+episode <- read_tsv("title.episode.tsv", na = "\\N", quote = "")
+ratings <- read_tsv("title.ratings.tsv", na = "\\N", quote = "")
 ```
 
 ```{r error=FALSE, warning=FALSE}
-tv_series <- title_basics %>%
-  filter(!is.na(endYear))
-
-tv_series_ids <- tv_series$tconst
+episode_summary <- episode %>%
+        distinct(parentTconst, seasonNumber, .keep_all = TRUE) %>%
+        filter(!is.na(parentTconst)) %>%
+        group_by(parentTconst) %>%
+        summarise(
+              total_seasons = n(),
+              .groups = 'drop'
+          ) 
 ```
 
 ```{r error=FALSE, warning=FALSE}
-tv_series_ratings <- title_ratings %>%
-  filter(tconst %in% tv_series_ids)
+df_plot <- basics %>%
+  filter(!is.na(endYear)) %>%  
+  inner_join(ratings, by = "tconst") %>%
+  inner_join(episode_summary, by = c("tconst" = "parentTconst")) %>%
+  filter(startYear >= 2000, startYear <= 2020) %>%
+  filter(endYear < 2023) %>%
+  filter(numVotes > 35000) %>%
+  filter(total_seasons <= 20) %>%
+  distinct(tconst, .keep_all = TRUE)
+```
 
-tv_series_episodes <- title_episode %>%
-  filter(parentTconst %in% tv_series_ids)
+```{r error=FALSE, warning=FALSE}
+ggplot(df_plot, aes(x = total_seasons, y = averageRating, size = numVotes, color = total_seasons)) +
+  
+  geom_jitter(alpha = 0.5, width = .2) +
+  
+  scale_size(range = c(1, 12), name = "Number of votes") +
+  
+  scale_color_viridis_c(
+    option = "viridis", 
+    name = "Number of Seasons",
+    limits = c(1, 15),
+    oob = scales::squish
+  ) +
+  
+  scale_x_continuous(breaks = 1:15) +
+  scale_y_continuous(limits = c(0, 10)) + 
+  theme_minimal() +
+  labs(
+    title = "Relationship between Imdb rating, sesaon count",
+    subtitle = "Series with more than 35k ratings",
+    x = "Number of seasons",
+    y = "IMDb Rating"
+  ) +
+  coord_cartesian(ylim = c(6,10)) +
+  theme(
+    plot.title = element_text(face = "bold", size = 16),
+    legend.position = "right"
+  )
 ```
 
 
+```{r error=FALSE, warning=FALSE}
+
+```
+
+
+```{r error=FALSE, warning=FALSE}
 
 
 
+```
+
+
+```{r error=FALSE, warning=FALSE}
 
 
 
-
-
+```
