@@ -26,10 +26,12 @@ Extract the `.tsv` files and place them in the root directory for the R code to 
 
 ## Python Setup
 
-Create a virtual environment with Python 3.13.7:
+Create a virtual environment with Python:
+
+Local development is done with Python 3.13.7.
 
 ```bash
-python3.13 -m venv .venv
+python -m venv .venv
 ```
 
 Activate the virtual environment:
