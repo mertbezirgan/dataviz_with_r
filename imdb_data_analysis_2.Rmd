@@ -1,0 +1,128 @@
+---
+title: "imdb_data_analysis"
+output: html_document
+date: "2026-01-17"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r error=FALSE, warning=FALSE}
+install.packages("plotly")
+install.packages("grid")
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(plotly)
+library(grid)
+```
+
+```{r error=FALSE, warning=FALSE}
+episodes <- read_csv("episode_ratings.csv", show_col_types = FALSE)
+```
+
+```{r error=FALSE, warning=FALSE}
+ep_plot <- episodes %>%
+  mutate(
+    season  = as.integer(season),
+    episode = as.integer(episode),
+    rating  = as.numeric(rating)
+  ) %>%
+  filter(!is.na(show_name), !is.na(season), !is.na(episode), !is.na(rating)) %>%
+  arrange(show_name, season, episode) %>%
+  group_by(show_name) %>%
+  mutate(
+    episode_index = row_number(),  
+    season_episode = paste0("S", season, "E", episode)
+  ) %>%
+  ungroup()
+```
+
+```{r error=FALSE, warning=FALSE}
+ep_plot2 <- ep_plot %>%
+  group_by(show_name, season) %>%
+  mutate(
+    is_season_final = episode == max(episode, na.rm = TRUE)
+  ) %>%
+  ungroup() %>%
+  mutate(
+    sxe = paste0("S", season, "E", episode),
+    tip = paste0(
+      "<b>", show_name, "</b><br>",
+      sxe,
+      ifelse(!is.na(episode_name) & episode_name != "",
+             paste0(" — ", episode_name), ""),
+      "<br>Rating: ", rating
+    )
+  )
+```
+
+```{r error=FALSE, warning=FALSE}
+colors <- c(
+  "Better Call Saul" = "#ff595e",
+  "Breaking Bad"     = "#ffca3a",
+  "Game of Thrones"  = "#8ac926",
+  "The Office"       = "#1982c4",
+  "The Wire"         = "#6a4c93"
+)
+
+p <- ggplot(
+  ep_plot2,
+  aes(
+    x = episode_index,
+    y = rating,
+    color = show_name,
+    group = show_name,
+    text = tip
+  )
+) +
+  geom_line(linewidth = 0.8, alpha = 0.95) +
+  geom_point(size = 1.0, alpha = 0.95) +
+  geom_point(
+    data = subset(ep_plot2, is_season_final),
+    size = 2.0,
+    alpha = 0.95
+  ) +
+  facet_wrap(~ show_name, scales = "free_y", ncol = 1) +   
+  scale_color_manual(values = colors) +                  
+  labs(
+    x = "Episode number",
+    y = "IMDb episode rating",
+    color = "TV series"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    legend.position = "none",            
+    strip.text = element_text(face = "bold"),
+    panel.grid.minor = element_blank(),
+    panel.spacing = grid::unit(0.01, "lines")
+    )
+
+gg <- ggplotly(p, tooltip = "text") %>%
+  layout(
+    xaxis = list(autorange = FALSE, fixedrange = TRUE),
+    title = list(
+      text = paste0(
+        "Episode Ratings Over Time",
+        "<br><sup>Each panel shows one series and larger dots show season finales</sup>"
+      ),
+      x = 0,            
+      xanchor = "left",
+      y = 0.98,         
+      yanchor = "top",
+      pad = list(t = 20, l = 20)
+    ),
+    margin = list(t = 80, l = 80, b = 80)
+  )
+
+gg
+```
+
+```{r error=FALSE, warning=FALSE}
+htmlwidgets::saveWidget(
+  ggplotly(gg, tooltip = "text"),
+  "episode_ratings_interactive.html",
+  selfcontained = TRUE
+)
+```

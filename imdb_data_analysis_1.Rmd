@@ -15,12 +15,10 @@ install.packages("tidyverse")
 install.packages("ggplot2")
 install.packages("dplyr")
 install.packages("scales")
-install.packages("viridis")
 library(tidyverse)
 library(ggplot2)
 library(dplyr)
 library(scales)
-library(viridis)
 ```
 
 ```{r error=FALSE, warning=FALSE}
@@ -31,13 +29,13 @@ ratings <- read_tsv("title.ratings.tsv", na = "\\N", quote = "")
 
 ```{r error=FALSE, warning=FALSE}
 episode_summary <- episode %>%
-        distinct(parentTconst, seasonNumber, .keep_all = TRUE) %>%
-        filter(!is.na(parentTconst)) %>%
-        group_by(parentTconst) %>%
-        summarise(
-              total_seasons = n(),
-              .groups = 'drop'
-          ) 
+  distinct(parentTconst, seasonNumber, .keep_all = TRUE) %>%
+  filter(!is.na(parentTconst)) %>%
+  group_by(parentTconst) %>%
+  summarise(
+    total_seasons = n(),
+    .groups = 'drop'
+  ) 
 ```
 
 ```{r error=FALSE, warning=FALSE}
@@ -85,7 +83,7 @@ ggsave("graph_1.png", width = 10, height = 6, dpi = 300)
 
 ```{r error=FALSE, warning=FALSE}
 filtered_ids <- df_plot %>%
-  filter(total_seasons >= 4, averageRating >= 8.5) %>%
+  filter(total_seasons >= 5, averageRating >= 9) %>%
   pull(tconst)
 writeLines(paste(filtered_ids, collapse = ","), "imdb_ids.csv")
 ```
