@@ -52,7 +52,8 @@ df_plot <- basics %>%
 
 ```{r error=FALSE, warning=FALSE}
 ggplot(df_plot, aes(x = total_seasons, y = averageRating, size = numVotes, fill = numVotes)) +
-  geom_jitter(shape = 21, color = "black", alpha = 0.8, width = .2) +
+  geom_jitter(aes(shape = "TV Series"), color = "black", alpha = 0.8, width = .2) +
+  scale_shape_manual(values = 21, name = NULL, labels = "Each bubble is a TV series") +
   scale_size(range = c(1, 15), name = "Number of votes") +
   scale_fill_gradient(
     low = "black", 
@@ -76,7 +77,10 @@ ggplot(df_plot, aes(x = total_seasons, y = averageRating, size = numVotes, fill 
     legend.position = "right",
     axis.text = element_text(size = 14)
   ) +
-  guides(size = guide_legend(override.aes = list(fill = "gray")))
+  guides(
+    size = guide_legend(override.aes = list(fill = "gray")),
+    shape = guide_legend(override.aes = list(size = 5, fill = "black"))
+  )
 
 ggsave("graph_1.png", width = 10, height = 6, dpi = 300)
 ```
