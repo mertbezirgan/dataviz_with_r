@@ -8,6 +8,7 @@ compressed/
 episode_ratings.csv
 imdb_ids.csv
 
+**/*.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
