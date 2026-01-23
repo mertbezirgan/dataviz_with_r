@@ -7,6 +7,7 @@ compressed/
 
 episode_ratings.csv
 imdb_ids.csv
+episode_ratings_interactive.html
 
 **/*.png
 

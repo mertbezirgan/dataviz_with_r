@@ -52,13 +52,13 @@ df_plot <- basics %>%
 
 ```{r error=FALSE, warning=FALSE}
 ggplot(df_plot, aes(x = total_seasons, y = averageRating, size = numVotes, fill = numVotes)) +
-  geom_jitter(aes(shape = "TV Series"), color = "black", alpha = 0.8, width = .2) +
-  scale_shape_manual(values = 21, name = NULL, labels = "Each bubble is a TV series") +
+  geom_jitter(shape = 21, color = "black", alpha = 0.8, width = .2) +
   scale_size(range = c(1, 15), name = "Number of votes") +
   scale_fill_gradient(
     low = "black", 
     high = "darkred",
-    guide = "none"
+    name = "Number of votes",
+    guide = "legend"
   ) +
   scale_x_continuous(breaks = 1:15, limits = c(1, 15)) +
   scale_y_continuous(limits = c(0, 10)) + 
@@ -67,7 +67,8 @@ ggplot(df_plot, aes(x = total_seasons, y = averageRating, size = numVotes, fill 
     title = "Relationship between IMDb rating and season count",
     subtitle = "Series with more than 35k ratings",
     x = "Number of seasons",
-    y = "Rating"
+    y = "Rating",
+    caption = "Each bubble represents a TV series" 
   ) +
   coord_cartesian(ylim = c(6,10)) +
   theme(
@@ -75,11 +76,12 @@ ggplot(df_plot, aes(x = total_seasons, y = averageRating, size = numVotes, fill 
     panel.border = element_rect(colour = "black", fill = NA, size = 1),
     panel.grid.minor = element_blank(),
     legend.position = "right",
-    axis.text = element_text(size = 14)
+    axis.text = element_text(size = 14),
+    plot.caption = element_text(hjust = 0, face = "italic", color = "gray40")
   ) +
   guides(
-    size = guide_legend(override.aes = list(fill = "gray")),
-    shape = guide_legend(override.aes = list(size = 5, fill = "black"))
+    size = guide_legend(),
+    fill = guide_legend()
   )
 
 ggsave("graph_1.png", width = 10, height = 6, dpi = 300)
